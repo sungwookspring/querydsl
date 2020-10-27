@@ -9,6 +9,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import practice.querydsl.domain.Member;
 
+import java.util.List;
+
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @Transactional(readOnly = true)
@@ -40,6 +42,20 @@ public class MemberRepositoryTest {
         Assertions.assertThat(find_member.getAge()).isEqualTo(new_member.getAge());
 
         return find_member;
+    }
+
+    @Test
+    public void findAll(){
+        List<Member> members = memberRepository.findAll();
+
+        members.stream()
+                .forEach(member -> System.out.println(member.getUsername()));
+
+    }
+
+    @Test
+    public void startJPQL(){
+
     }
 
 }
