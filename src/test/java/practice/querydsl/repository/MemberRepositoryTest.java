@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import practice.querydsl.domain.Member;
 import practice.querydsl.domain.QMember;
+import practice.querydsl.domain.QTeam;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static practice.querydsl.domain.QMember.*;
 import static practice.querydsl.domain.QMember.member;
+import static practice.querydsl.domain.QTeam.team;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -59,7 +61,7 @@ public class MemberRepositoryTest {
         List<Member> members = memberRepository.findAll();
 
         members.stream()
-                .forEach(member -> System.out.println(member.getUsername()));
+                .forEach(member -> System.out.println(member.getId() + ":" + member.getUsername()));
 
     }
 
@@ -204,6 +206,17 @@ public class MemberRepositoryTest {
     public void group() {
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
 
+        List<Tuple> result = jpaQueryFactory
+                .select(team.name, member.age.avg())
+                .from(member)
+                .join(member.team, team)
+                .groupBy(team.name)
+                .fetch();
 
+        Tuple teamA = result.get(0);
+        Tuple teamB = result.get(1);
+
+        assertThat(teamA.get(team.name)).isEqualTo("teamA");
+        assertThat(teamB.get(team.name)).isEqualTo("teamB");
     }
 }
