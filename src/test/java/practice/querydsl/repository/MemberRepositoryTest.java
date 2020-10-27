@@ -140,4 +140,41 @@ public class MemberRepositoryTest {
         members.stream()
                 .forEach(member -> System.out.println(member.getUsername()));
     }
+
+    /***
+     * 1개를 건너뛰고 2개까지 조회
+     */
+    @Test
+    public void paging(){
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+        List<Member> members = jpaQueryFactory
+                .selectFrom(member)
+                .orderBy(member.username.asc())
+                .offset(1) // skip -> start offset
+                .limit(2)
+                .fetch();
+
+        assertThat(members.size()).isEqualTo(2);
+    }
+
+    /***
+     * 전체를 조회하고 페이징?
+     */
+    @Test
+    public void paging2(){
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+        QueryResults<Member> results = jpaQueryFactory
+                .selectFrom(member)
+                .orderBy(member.username.asc())
+                .offset(1) // skip -> start offset
+                .limit(2)
+                .fetchResults();
+
+        System.out.println("멤버 수: " + results.getTotal());
+        assertThat(results.getLimit()).isEqualTo(2);
+        assertThat(results.getOffset()).isEqualTo(1);
+        assertThat(results.getResults().size()).isEqualTo(2);
+    }
 }
