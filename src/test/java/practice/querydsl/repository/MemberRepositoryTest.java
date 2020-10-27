@@ -127,4 +127,17 @@ public class MemberRepositoryTest {
         List<Member> results1 = results.getResults();
     }
 
+
+    @Test
+    public void sort() {
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+        List<Member> members = jpaQueryFactory
+                .selectFrom(member)
+                .orderBy(member.age.desc(), member.username.desc().nullsLast())
+                .fetch();
+
+        members.stream()
+                .forEach(member -> System.out.println(member.getUsername()));
+    }
 }
