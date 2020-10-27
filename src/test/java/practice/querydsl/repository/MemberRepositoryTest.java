@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static practice.querydsl.domain.QMember.member;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -71,6 +72,32 @@ public class MemberRepositoryTest {
                 .fetchOne();
 
         assertThat(find_member.getUsername()).isEqualTo("test23");
+    }
+
+    @Test
+    public void search(){
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+        Member member = jpaQueryFactory
+                .selectFrom(QMember.member)
+                .where(QMember.member.username.eq("test24").and(QMember.member.age.eq(100)))
+                .fetchOne();
+
+        assertThat(member.getUsername()).isEqualTo("test24");
+    }
+
+    @Test
+    public void search2(){
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+        Member member = jpaQueryFactory
+                .selectFrom(QMember.member)
+                .where(
+                        QMember.member.username.eq("test24"),
+                        QMember.member.age.eq(100))
+                .fetchOne();
+
+        assertThat(member.getUsername()).isEqualTo("test24");
     }
 
 }
