@@ -1,6 +1,7 @@
 package practice.querydsl.repository;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -70,10 +71,10 @@ public class MemberRepositoryTest {
         Member find_member = jpaQueryFactory
                 .select(m)
                 .from(m)
-                .where(m.username.eq("test23"))
+                .where(m.username.eq("testA23"))
                 .fetchOne();
 
-        assertThat(find_member.getUsername()).isEqualTo("test23");
+        assertThat(find_member.getUsername()).isEqualTo("testA23");
     }
 
     @Test
@@ -82,10 +83,10 @@ public class MemberRepositoryTest {
 
         Member member = jpaQueryFactory
                 .selectFrom(QMember.member)
-                .where(QMember.member.username.eq("test24").and(QMember.member.age.eq(100)))
+                .where(QMember.member.username.eq("testB24").and(QMember.member.age.eq(24)))
                 .fetchOne();
 
-        assertThat(member.getUsername()).isEqualTo("test24");
+        assertThat(member.getUsername()).isEqualTo("testB24");
     }
 
     @Test
@@ -95,11 +96,11 @@ public class MemberRepositoryTest {
         Member member = jpaQueryFactory
                 .selectFrom(QMember.member)
                 .where(
-                        QMember.member.username.eq("test24"),
-                        QMember.member.age.eq(100))
+                        QMember.member.username.eq("testA24"),
+                        QMember.member.age.eq(24))
                 .fetchOne();
 
-        assertThat(member.getUsername()).isEqualTo("test24");
+        assertThat(member.getUsername()).isEqualTo("testA24");
     }
 
     @Test
@@ -110,9 +111,9 @@ public class MemberRepositoryTest {
                 .selectFrom(member)
                 .fetch();
 
-        Member find_member = jpaQueryFactory
-                .selectFrom(QMember.member)
-                .fetchOne();
+//        Member find_member = jpaQueryFactory
+//                .selectFrom(QMember.member)
+//                .fetchOne();
 
         Member find_member1 = jpaQueryFactory
                 .selectFrom(QMember.member)
@@ -176,5 +177,33 @@ public class MemberRepositoryTest {
         assertThat(results.getLimit()).isEqualTo(2);
         assertThat(results.getOffset()).isEqualTo(1);
         assertThat(results.getResults().size()).isEqualTo(2);
+    }
+
+    @Test
+    public void aggregation(){
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+        List<Tuple> results = jpaQueryFactory
+                .select(
+                        member.count(),
+                        member.age.sum(),
+                        member.age.avg(),
+                        member.age.max(),
+                        member.age.min()
+                )
+                .from(member)
+                .fetch();
+        
+        // Tuple방식보다 Dto방식을 많이 선호
+        Tuple tuple = results.get(0);
+        assertThat(tuple.get(member.count())).isEqualTo(100);
+//        assertThat(tuple.get(member.sum())).isEqualTo(..?);
+    }
+
+    @Test
+    public void group() {
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+
     }
 }

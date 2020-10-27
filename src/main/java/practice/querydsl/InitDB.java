@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import practice.querydsl.domain.Member;
+import practice.querydsl.domain.Team;
 import practice.querydsl.repository.MemberRepository;
+import practice.querydsl.repository.TeamRepository;
 
 import javax.annotation.PostConstruct;
 
@@ -24,22 +26,44 @@ public class InitDB {
     @RequiredArgsConstructor
     static class InitService{
         private final MemberRepository memberRepository;
+        private final TeamRepository teamRepository;
 
         public void run(){
-            int member_length = 100;
+            int teamA_member_length = 50;
+            int teamB_member_length = 50;
 
-            for (int i = 0; i < member_length; i++) {
-                String username = "test" + Integer.toString(i);
-                int age = 100;
+            // == TeamA 멤버 초기화
+            Team teamA = Team.builder()
+                    .name("teamA")
+                    .build();
+            teamRepository.save(teamA);
 
-                create_member(username, age);
+            for (int i = 0; i < teamA_member_length; i++) {
+                String username = "testA" + Integer.toString(i);
+                int age = i;
+
+                create_member(username, age, teamA);
+            }
+
+            // == TeamB 멤버 초기화
+            Team teamB = Team.builder()
+                    .name("teamB")
+                    .build();
+            teamRepository.save(teamB);
+
+            for (int i = 0; i < teamB_member_length; i++) {
+                String username = "testB" + Integer.toString(i);
+                int age = i;
+
+                create_member(username, age, teamB);
             }
         }
 
-        private Member create_member(String username, int age){
+        private Member create_member(String username, int age, Team team){
             Member member = Member.builder()
                     .username(username)
                     .age(age)
+                    .team(team)
                     .build();
 
             memberRepository.save(member);
