@@ -17,7 +17,7 @@ public void startQuerydsl(){
     assertThat(find_member.getUsername()).isEqualTo("test23");
 }
 ```
-* 결과: jpql로 변환되서 쿼리문 실행
+* 결과: 실행된 쿼리문 결과
 ```java
 select
     member0_.member_id as member_i1_0_,
