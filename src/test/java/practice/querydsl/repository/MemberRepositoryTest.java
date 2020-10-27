@@ -219,4 +219,39 @@ public class MemberRepositoryTest {
         assertThat(teamA.get(team.name)).isEqualTo("teamA");
         assertThat(teamB.get(team.name)).isEqualTo("teamB");
     }
+
+    /***
+     * 팀A에 소속된 모든 회원(ManyTOne)
+     */
+    @Test
+    public void join(){
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+        List<Member> teamA = jpaQueryFactory
+                .select(member)
+                .from(member)
+                .join(member.team, team)
+                .where(team.name.eq("teamA"))
+                .fetch();
+
+        teamA.forEach(member -> System.out.println(member.getUsername()));
+    }
+
+    /***
+     * 팀A에 소속된 모든 회원(OneToMany)
+     */
+    @Test
+    public void join2(){
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+        List<Member> teamA = jpaQueryFactory
+                .select(member)
+                .from(team)
+                .join(team.members, member)
+                .where(team.name.eq("teamA"))
+                .fetch();
+
+        teamA.forEach(member -> System.out.println(member.getUsername()));
+        System.out.println("결과 크기: " + teamA.size());
+    }
 }
