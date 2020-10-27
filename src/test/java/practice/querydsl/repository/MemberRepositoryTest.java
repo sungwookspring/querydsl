@@ -1,5 +1,6 @@
 package practice.querydsl.repository;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static practice.querydsl.domain.QMember.*;
 import static practice.querydsl.domain.QMember.member;
 
 @SpringBootTest
@@ -98,6 +100,31 @@ public class MemberRepositoryTest {
                 .fetchOne();
 
         assertThat(member.getUsername()).isEqualTo("test24");
+    }
+
+    @Test
+    public void resultFetch(){
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+        List<Member> members = jpaQueryFactory
+                .selectFrom(member)
+                .fetch();
+
+        Member find_member = jpaQueryFactory
+                .selectFrom(QMember.member)
+                .fetchOne();
+
+        Member find_member1 = jpaQueryFactory
+                .selectFrom(QMember.member)
+                .fetchFirst();
+
+        // getTotal함수 따로 실행 필요
+        QueryResults<Member> results = jpaQueryFactory
+                .selectFrom(member)
+                .fetchResults();
+
+        results.getTotal();
+        List<Member> results1 = results.getResults();
     }
 
 }
